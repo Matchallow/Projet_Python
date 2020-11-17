@@ -28,7 +28,7 @@ time5 = capteur_5.sent_at
 time6 = capteur_6.sent_at
 
 
-##FONCTIONS STATISTIQUES
+##FONCTIONS STATISTIQUES Début
 
 def maximum(L):
     max = L[0]
@@ -52,11 +52,8 @@ def moyenne(L):
     return(s/n)
     
 def variance(L):
-    m = moyenne(L)
-    A=[]
-    for k in range(len(L)):
-        A.append((L[k]-m)**2)
-    return moyenne(A)
+    m=moyenne(L)
+    return moyenne([(x-m)**2 for x in L])
 
 def ecart_type(L):
     return variance(L)**0.5
@@ -89,6 +86,29 @@ def mediane(L):
         return ( L[(n-1)//2] + L[(n+1)//2] ) / 2.0
     else:
         return L[(n-1)//2]
+    
+def covariance(X,Y):                    #fonctionne mais long
+    L=[]
+    for k in range(len(X)):
+        L.append((X[k]-moyenne(X))*(Y[k]-moyenne(Y)))
+    return moyenne(L)
+
+def indice_corr(X,Y):                   #fonctionne mais long
+    return (covariance(X,Y)/(ecart_type(X)*ecart_type(Y)))
+
+def partie_entiere(nombre):
+    nb=nombre-int(nombre)
+    if nb<0.5:
+        return int(nombre)
+    else:
+        return int(nombre)+1
+
+def humidex(temperature,humidity):
+    return partie_entiere((temperature+(5/9)*((6.112)*10**(7.5*(temperature/(237.7+temperature)))*(humidity/100)-10)))
+
+
+##FONCTIONS STATISTIQUES Fin
+
 
 
 ##date min et max pour chaque capteur
@@ -118,8 +138,8 @@ def Courbe():
         
         #Changer le UTC +02:00    J'ai mis Europe/Paris par défaut
         
-        start_date = pd.to_datetime(input('Saisir date début AAAA-MM-JJ : ')).tz_localize('CET')
-        end_date = pd.to_datetime(input('Saisir date fin AAAA-MM-JJ : ')).tz_localize('CET')
+        start_date = pd.to_datetime(input('Saisir date début AAAA-MM-JJ HH:MM : ')).tz_localize('CET')
+        end_date = pd.to_datetime(input('Saisir date fin AAAA-MM-JJ HH:MM : ')).tz_localize('CET')
         
         #On choisit les dates et capteurs pertinents
         
@@ -197,11 +217,14 @@ def Courbe():
             plt.show()
         else :
             return("La variable choisie n'existe pas...")
- 
+    
     else :              #Mauvais capteur
         return('Capteur non existant')
+    
+
 
 ##DISPLAY STATISTIQUES
-def displayStats(L,start_date,end_date):
-    
-    
+
+#def displayStats():
+
+
