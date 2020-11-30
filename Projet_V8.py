@@ -129,7 +129,7 @@ mdate6,Mdate6 = minimum(time6.tolist()),maximum(time6.tolist())
 
 def anomalies(variable,numero):                     #Méthode écart aux extrema
   
-    if (numero in ['1','2','3','4','5','6'])==True:
+    if (numero in ['1','2','3','4','5','6']):
         capteur_numero = []
         
         #On choisit les dates et capteurs pertinents
@@ -215,10 +215,10 @@ def anomalies(variable,numero):                     #Méthode écart aux extrema
     else :              #Mauvais capteur
         return('Capteur non existant')
 
-    
+
 def anomalies_mzscore(variable,numero):    #Méthode Modified Z-score. Pour l'utiliser, changer anomalies en anomalies_mzscore dans display()
   
-    if (numero in ['1','2','3','4','5','6'])==True:
+    if (numero in ['1','2','3','4','5','6']):
         capteur_numero = []
         
         #On choisit les dates et capteurs pertinents
@@ -291,7 +291,6 @@ def anomalies_mzscore(variable,numero):    #Méthode Modified Z-score. Pour l'ut
         return('Capteur non existant')    
 
 
-    
 def display():
     variable = input('Choisir Température, Bruit, Luminosité, CO2, Humidité ou Humidex : ')
     
@@ -301,7 +300,7 @@ def display():
     
     numero = input('Saisir le numéro du capteur : ' )
     
-    if (numero in ['1','2','3','4','5','6'])==True:
+    if (numero in ['1','2','3','4','5','6']):
         time = []
         capteur_numero = []
         
@@ -522,7 +521,7 @@ def correlation():
     
     numero = input('Saisir le numéro du capteur : ' )
     
-    if (numero in ['1','2','3','4','5','6'])==True:
+    if (numero in ['1','2','3','4','5','6']):
         capteur_numero = []
         
         start_date = pd.to_datetime(input('Saisir date début AAAA-MM-JJ HH:MM : ')).tz_localize('CET')
