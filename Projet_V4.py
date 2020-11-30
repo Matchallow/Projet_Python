@@ -1,8 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+
+
 #import matplotlib.dates as mdates
 
-data = pd.read_excel(r'C:\Users\emilie.cai\Documents\COURS\Algorithmique et Programmation\Projet\EIVP_KM_V2.xlsx')
+data = pd.read_excel(r'C:\Users\emilie.cai\Documents\COURS\Algorithmique et Programmation\Projet\EIVP_KM_V4.xlsx')
 
 data['sent_at'] = pd.to_datetime(data.sent_at)      #On change le type de la colonne
 
@@ -97,9 +99,16 @@ def partie_entiere(nombre):
     else:
         return int(nombre)+1
 
-
-##FONCTIONS STATISTIQUES Fin
-
+def quartiles1_3(L):
+    TriFusion(L)
+    n = len(L)
+    if  n%4==0 :
+        Q1 = L[(n//4)-1]
+        Q3 = L[(3*n)//4-1]
+    if n%4!=0 :
+        Q1 = L[(n//4)]
+        Q3 = L[((3*n)//4)]
+    return Q1,Q3
 
 
 ##date min et max pour chaque capteur
@@ -365,7 +374,7 @@ def anomalies():
     
         # On détermine la moyenne maximale et minimale sur la période
         t = date_min
-        delta = pd.Timedelta(days=1) #Solène tu peux changer en hours = ... ou minutes =...
+        delta = pd.Timedelta(hours=5) #Solène tu peux changer en hours = ... ou minutes =...
         anomalies = []
         max_jour=[]
         min_jour=[]
@@ -400,6 +409,84 @@ def anomalies():
                 anomalies.append(T[k])
                 
         return anomalies, min_jour, max_jour, moy_min, moy_max, ecart_type_min, ecart_type_max
+     
+    else :              #Mauvais capteur
+        return('Capteur non existant')
+    
+    
+def anomalies2():
+    variable = input('Choisir Température, Bruit, Luminosité, CO2, Humidité : ')
+    
+    if variable not in ['Température','Bruit','Luminosité', 'CO2', 'Humidité'] :
+            return("La variable choisie n'existe pas...")
+        
+    numero = input('Saisir le numéro du capteur : ' )
+    
+    if (numero in ['1','2','3','4','5','6'])==True:
+        capteur_numero = []
+        
+        #On choisit les dates et capteurs pertinents
+        
+        if numero == '1':  
+            capteur_numero,date_max,date_min = capteur_1,Mdate1,mdate1
+        elif numero == '2':
+            capteur_numero,date_max,date_min = capteur_2,Mdate2,mdate2
+        elif numero == '3':
+            capteur_numero,date_max,date_min = capteur_3,Mdate3,mdate3
+        elif numero == '4':
+            capteur_numero,date_max,date_min = capteur_4,Mdate4,mdate4
+        elif numero == '5':
+            capteur_numero,date_max,date_min = capteur_5,Mdate5,mdate5
+        elif numero == '6':
+            capteur_numero,date_max,date_min = capteur_6,Mdate6,mdate6
+        
+        var = []    
+        if variable == 'Température':
+            var = 'temp'
+        elif variable == 'Bruit':
+            var = 'noise'
+        elif variable == 'Luminosité':
+            var = 'lum'
+        elif variable == 'CO2':
+            var = 'co2'
+        elif variable == 'Humidité':
+            var = 'humidity'
+    
+    
+        # On détermine la moyenne maximale et minimale sur la période
+        t = date_min
+        delta = pd.Timedelta(days=1) #Solène tu peux changer en hours = ... ou minutes =...
+        anomalies = []
+        Q1_ech = []
+        Q3_ech = []
+        while t<date_max :
+            
+            date = capteur_numero.set_index(['sent_at'])
+            selection = date.loc[ t : t+delta]
+            L = selection[var].tolist()
+            Q1,Q3 = quartiles1_3(L)
+            Q1_ech.append(Q1)
+            Q3_ech.append(Q3)
+            t = t+delta
+            
+        moy_Q1 = moyenne(Q1_ech)
+        moy_Q3 = moyenne(Q3_ech)
+        IQ = moy_Q3-moy_Q1
+            
+        # On cherche les valeurs aberrantes
+        Q = capteur_numero[var].tolist()
+        T = time1.tolist()
+        
+        for k in range(len(Q)):
+            
+        ##A voir parce que pour CO2 capteur 1 si on met sigma =2 il y a des anomalies
+        ##Mais sigma=3 rien. Pareil pour Luminosité capteur 2
+        ##Choix à justifier donc.
+        
+            if Q[k]<(moy_Q1-1.5*IQ) or Q[k]>(moy_Q3+1.5*IQ) :
+                anomalies.append(T[k])
+                
+        return anomalies,moy_Q1,moy_Q3,IQ
      
     else :              #Mauvais capteur
         return('Capteur non existant')
